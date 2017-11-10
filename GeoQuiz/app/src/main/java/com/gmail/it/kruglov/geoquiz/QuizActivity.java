@@ -1,12 +1,16 @@
 package com.gmail.it.kruglov.geoquiz;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -16,7 +20,9 @@ public class QuizActivity extends AppCompatActivity {
 
     private static final String TAG = "QuizActivity";
     private static final String KEY_INDEX = "QuizActivity.index";
+    private static final String KEY_CHEAT_TRIES = "QuizActivity.cheat_tries";
     private static final int REQUEST_CODE_CHEAT = 0;
+    private static final int MAX_CHEAT_TRIES = 3;
 
     private Button mTrueButton;
     private Button mFalseButton;
@@ -24,10 +30,12 @@ public class QuizActivity extends AppCompatActivity {
     private ImageButton mPrevButton;
     private Button mCheatButton;
     private TextView mQuestionTextView;
+    private TextView mCheatTriesTextView;
 
     private QuestionBank mQuestionBank = QuestionBank.getInstance();
 
     private int mCurrentIndex = 0;
+    private int mCheatTries = MAX_CHEAT_TRIES;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +45,7 @@ public class QuizActivity extends AppCompatActivity {
 
         if (savedInstanceState != null) {
             mCurrentIndex = savedInstanceState.getInt(KEY_INDEX, 0);
+            mCheatTries = savedInstanceState.getInt(KEY_CHEAT_TRIES, MAX_CHEAT_TRIES);
         }
 
         mQuestionTextView = (TextView) findViewById(R.id.question_text_view);
@@ -46,6 +55,7 @@ public class QuizActivity extends AppCompatActivity {
         mNextButton = (ImageButton) findViewById(R.id.next_button);
         mPrevButton = (ImageButton) findViewById(R.id.prev_button);
         mCheatButton = (Button) findViewById(R.id.cheat_button);
+        mCheatTriesTextView = (TextView) findViewById(R.id.cheat_tries_text_view);
 
         updateQuestion();
 
@@ -98,6 +108,36 @@ public class QuizActivity extends AppCompatActivity {
                 startActivityForResult(intent, REQUEST_CODE_CHEAT);
             }
         });
+
+        updateCheatTriesTextView();
+    }
+
+    private void updateCheatTriesTextView() {
+        String text = getResources().getString(R.string.cheat_tries, mCheatTries);
+        mCheatTriesTextView.setText(text);
+        if (mCheatTries == 0) {
+            hideCheatButton();
+        }
+    }
+
+    private void hideCheatButton() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            int cx = mCheatButton.getWidth() / 2;
+            int cy = mCheatButton.getHeight() / 2;
+            float radius = mCheatButton.getWidth();
+            Animator anim = ViewAnimationUtils
+                    .createCircularReveal(mCheatButton, cx, cy, radius, 0);
+            anim.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    super.onAnimationEnd(animation);
+                    mCheatButton.setVisibility(View.INVISIBLE);
+                }
+            });
+            anim.start();
+        } else {
+            mCheatButton.setVisibility(View.INVISIBLE);
+        }
     }
 
     private void updateQuestion() {
@@ -170,6 +210,7 @@ public class QuizActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
         Log.i(TAG, "onSaveInstanceState");
         outState.putInt(KEY_INDEX, mCurrentIndex);
+        outState.putInt(KEY_CHEAT_TRIES, mCheatTries);
     }
 
     @Override
@@ -184,6 +225,8 @@ public class QuizActivity extends AppCompatActivity {
             }
 
             mQuestionBank.getQuestion(mCurrentIndex).setCheated(CheatActivity.wasAnswerShown(data));
+            mCheatTries--;
+            updateCheatTriesTextView();
         }
     }
 }

@@ -43,6 +43,13 @@
             android:layout_gravity="center_horizontal"
             android:text="@string/cheat_button"/>
 
+        <TextView
+            android:id="@+id/cheat_tries_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"/>
+
+
     </LinearLayout>
 
 
