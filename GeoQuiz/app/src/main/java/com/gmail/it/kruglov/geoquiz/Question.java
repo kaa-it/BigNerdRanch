@@ -9,6 +9,16 @@ public class Question {
     private int mTextResId;
     private boolean mAnswerTrue;
     private int mAnswered;
+    private boolean mIsCheated;
+
+    public boolean isCheated() {
+        return mIsCheated;
+    }
+
+    public void setCheated(boolean cheated) {
+        mIsCheated = cheated;
+    }
+
 
     public int getAnswered() {
         return mAnswered;
@@ -38,5 +48,6 @@ public class Question {
         mTextResId = textResId;
         mAnswerTrue = answerTrue;
         mAnswered = 0;
+        mIsCheated = false;
     }
 }
