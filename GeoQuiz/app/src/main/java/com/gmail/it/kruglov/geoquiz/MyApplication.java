@@ -8,9 +8,15 @@ import android.app.Application;
 
 public class MyApplication extends Application {
 
+    private static QuestionBank sBank;
+
     @Override
     public void onCreate() {
         super.onCreate();
-        QuestionBank.initInstance();
+        sBank = new QuestionBank();
+    }
+
+    public static QuestionBank getQuestionBank() {
+        return sBank;
     }
 }

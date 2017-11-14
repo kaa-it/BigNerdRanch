@@ -3,6 +3,7 @@ package com.gmail.it.kruglov.geoquiz;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
+import android.app.Application;
 import android.content.Intent;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
@@ -32,7 +33,7 @@ public class QuizActivity extends AppCompatActivity {
     private TextView mQuestionTextView;
     private TextView mCheatTriesTextView;
 
-    private QuestionBank mQuestionBank = QuestionBank.getInstance();
+    private QuestionBank mQuestionBank = MyApplication.getQuestionBank();
 
     private int mCurrentIndex = 0;
     private int mCheatTries = MAX_CHEAT_TRIES;
@@ -169,7 +170,7 @@ public class QuizActivity extends AppCompatActivity {
         Toast toast = Toast.makeText(this, messageResId, Toast.LENGTH_SHORT);
 
         if (userPressedTrue == answerIsTrue) {
-            toast.setGravity(Gravity.TOP, 0, 0);
+            toast.setGravity(Gravity.TOP, 0, getSupportActionBar().getHeight() + 50);
         }
 
         toast.show();

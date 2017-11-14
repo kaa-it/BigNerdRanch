@@ -23,16 +23,6 @@ public class QuestionBank {
         Log.d("QuestionBank", "Constructor");
     }
 
-    public static void initInstance() {
-        if (mBank == null) {
-            mBank = new QuestionBank();
-        }
-    }
-
-    public static QuestionBank getInstance() {
-        return mBank;
-    }
-
     public Question getQuestion(int index) {
         if (mQuestionBank.length <= index) {
             throw new IllegalArgumentException();
